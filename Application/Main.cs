@@ -6,19 +6,22 @@ namespace ParkingLotManagementSystem
 
         public static void Main(string[] args)
         {
-            int twoWheelerSlots, fourWheelerSlots, heavyVehicleSlots, typeOfVehicle = 0, userChoice = 0, slotNumber, tokenNumber = 0;
+            int twoWheelerSlots, fourWheelerSlots, heavyVehicleSlots, slotNumber, tokenNumber = 0, slots;
+            ActionPerformed userChoice = ActionPerformed.Parking;
+            TypeOfVehicle typeOfVehicle = TypeOfVehicle.TwoWheeler;
             ParkingLotSystem parkingLotSystem = new ParkingLotSystem();
-            Data data = new Data();
-            SlotBooking slotBooking = new SlotBooking();
+            TicketsData ticketsData = new TicketsData();
             ParkingTicket parkingTicket = new ParkingTicket();
             Validation validation = new Validation();
+            ParkingLot parkingLot1=new ParkingLot();
             Console.WriteLine("Welcome to Parking Lot Management System");
             Console.WriteLine("-----------------------------------------\n");
-            twoWheelerSlots = slotBooking.InitialSlotCapacity("Two Wheeler");
-            fourWheelerSlots = slotBooking.InitialSlotCapacity("Four Wheeler");
-            heavyVehicleSlots = slotBooking.InitialSlotCapacity("Heavy Vehicle");
-            data.slotsInitialisation(twoWheelerSlots, fourWheelerSlots, heavyVehicleSlots);
-            while (userChoice != 4)
+            twoWheelerSlots = parkingLot1.InitialSlotCapacity("Two Wheeler");
+            fourWheelerSlots = parkingLot1.InitialSlotCapacity("Four Wheeler");
+            heavyVehicleSlots = parkingLot1.InitialSlotCapacity("Heavy Vehicle");
+            ParkingLot parkingLot = new ParkingLot(twoWheelerSlots, fourWheelerSlots, heavyVehicleSlots);
+            ticketsData.slotsInitialisation(twoWheelerSlots, fourWheelerSlots, heavyVehicleSlots);
+            while (userChoice != ActionPerformed.Exit)
             {
                 string input;
                 Console.WriteLine("Enter a choice :\n\n1. Parking\n2. Unparking\n3. Display All Empty Slots\n4. Exit\n");
@@ -28,7 +31,7 @@ namespace ParkingLotManagementSystem
                 {
                     try
                     {
-                        userChoice = int.Parse(input);
+                        userChoice = (ActionPerformed)int.Parse(input);
                     }
                     catch (FormatException)
                     {
@@ -43,7 +46,7 @@ namespace ParkingLotManagementSystem
 
                 switch (userChoice)
                 {
-                    case 1:
+                    case ActionPerformed.Parking:
 
                         Console.WriteLine("\nEnter the type of vehicle :\n1. Two Wheeler\n2.Four Wheeler\n3.Heavy Vehicle");
                         input = Console.ReadLine()!;
@@ -51,31 +54,48 @@ namespace ParkingLotManagementSystem
                         {
                             try
                             {
-                                typeOfVehicle = int.Parse(input);
+                                typeOfVehicle = (TypeOfVehicle)int.Parse(input);
                             }
                             catch (FormatException)
                             {
-                                typeOfVehicle = 0;
                                 Console.WriteLine("Enter valid input\n");
+                                break;
                             }
                         }
                         else
                         {
                             Console.WriteLine("Enter valid input!\n");
-                            typeOfVehicle = 0;
+                            break;
+                        }
+                        if ("TwoWheeler" == typeOfVehicle.ToString())
+                        {
+                            slots = parkingLot.twoWheeler;
+                        }
+                        else if ("FourWheeler" == typeOfVehicle.ToString())
+                        {
+                            slots = parkingLot.fourWheeler;
+                        }
+                        else
+                        {
+                            slots = parkingLot.heavyVehicle;
+                        }
+                        if (slots == 0)
+                        {
+                            Console.WriteLine("No Empty Slots");
+                            break;
                         }
                         string vehicleNumber = "";
                         bool valid = false;
-                        if (typeOfVehicle != 0 && (typeOfVehicle > 0 && typeOfVehicle < 4))
+                        if (typeOfVehicle != 0)
                         {
 
                             Console.WriteLine("Enter Your Vehicle Number : ");
                             vehicleNumber = Console.ReadLine()!;
-                            if (validation.IsValidVehicle(vehicleNumber) && !Data.ParkedVehicles.Contains(vehicleNumber))
+                            if (validation.IsValidVehicle(vehicleNumber) && !ParkedVehicle.ParkedVehicles.Contains(vehicleNumber))
                             {
                                 if (vehicleNumber != "")
                                 {
-                                    Data.ParkedVehicles.Add(vehicleNumber);
+                                    ParkedVehicle.ParkedVehicles.Add(vehicleNumber);
 
                                 }
                                 valid = true;
@@ -83,12 +103,24 @@ namespace ParkingLotManagementSystem
                         }
                         if (valid)
                         {
-                            slotNumber = slotBooking.Parking(typeOfVehicle, userChoice, vehicleNumber);
+                            slotNumber = parkingLot.Parking((int)typeOfVehicle, (int)userChoice, vehicleNumber);
                             if (slotNumber == -1)
                                 Console.WriteLine("No slot Available");
                             else
                             {
-                                parkingTicket.IssueTicket(typeOfVehicle, slotNumber);
+                                parkingTicket.IssueTicket((int)typeOfVehicle, slotNumber);
+                                if ("TwoWheeler" == typeOfVehicle.ToString())
+                                {
+                                    parkingLot.twoWheeler--;
+                                }
+                                else if ("FourWheeler" == typeOfVehicle.ToString())
+                                {
+                                    parkingLot.fourWheeler--;
+                                }
+                                else
+                                {
+                                    parkingLot.heavyVehicle--;
+                                }
                             }
                         }
 
@@ -98,49 +130,47 @@ namespace ParkingLotManagementSystem
                         }
 
                         break;
-                    case 2:
-                        int flag = 0;
-                        if (Data.Tokens.Count == 0)
+                    case ActionPerformed.Unparking:
+                        if (ParkedVehicle.Tokens.Count == 0)
                         {
-                            tokenNumber = -1;
+                            Console.WriteLine("No Vehicle to unpark");
+                            break;
                         }
                         Console.WriteLine("Enter Token Number");
                         try
                         {
                             tokenNumber = int.Parse(Console.ReadLine()!);
-                            if (Data.Tokens.ContainsKey(tokenNumber))
-                            {
-                                flag = 1;
-                            }
-                            else
+                            if (!ParkedVehicle.Tokens.ContainsKey(tokenNumber))
                             {
                                 Console.WriteLine("Token Number is not found");
+                                break;
                             }
                         }
                         catch (FormatException)
                         {
                             Console.WriteLine("Invalid Input");
-                        }
+                            break;
 
-                        if (tokenNumber == -1)
-                        {
-                            Console.WriteLine("No Vehicle to Unpark");
                         }
-                        else if (flag == 0 && tokenNumber != -1)
+                        typeOfVehicle = (TypeOfVehicle)ParkedVehicle.Tokens[tokenNumber];
+                        slotNumber = parkingLot.UnParking(tokenNumber, (int)typeOfVehicle);
+                        parkingTicket.IssueTicket((int)typeOfVehicle, slotNumber);
+                        if ("TwoWheeler" == typeOfVehicle.ToString())
                         {
-                            Console.WriteLine("Enter Valid Input");
+                            parkingLot.twoWheeler++;
+                        }
+                        else if ("FourWheeler" == typeOfVehicle.ToString())
+                        {
+                            parkingLot.fourWheeler++;
                         }
                         else
                         {
-                            typeOfVehicle = Data.Tokens[tokenNumber];
-                            slotNumber = slotBooking.UnParking(tokenNumber, typeOfVehicle);
-                            parkingTicket.IssueTicket(typeOfVehicle, slotNumber);
+                            parkingLot.heavyVehicle++;
                         }
                         break;
-                    case 3:
-                        slotBooking.DisplayEmptySlots(); break;
+                    case ActionPerformed.DisplayEmptySlots:
+                        Console.WriteLine("Empty two wheeler slots are : \n Two wheeler : {0} \n Four Wheeler : {1}\n Heavy Vehicle : {2}\n", parkingLot.twoWheeler, parkingLot.fourWheeler, parkingLot.heavyVehicle); break;
                     default:
-                        Console.WriteLine("Invalid Choice");
                         break;
                 }
             }
