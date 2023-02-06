@@ -1,0 +1,15 @@
+F:\ParkingLotSystem\bin\Debug\net6.0\ParkingLotSystem.exe
+F:\ParkingLotSystem\bin\Debug\net6.0\ParkingLotSystem.deps.json
+F:\ParkingLotSystem\bin\Debug\net6.0\ParkingLotSystem.runtimeconfig.json
+F:\ParkingLotSystem\bin\Debug\net6.0\ParkingLotSystem.dll
+F:\ParkingLotSystem\bin\Debug\net6.0\ParkingLotSystem.pdb
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.csproj.AssemblyReference.cache
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.GeneratedMSBuildEditorConfig.editorconfig
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.AssemblyInfoInputs.cache
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.AssemblyInfo.cs
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.csproj.CoreCompileInputs.cache
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.dll
+F:\ParkingLotSystem\obj\Debug\net6.0\refint\ParkingLotSystem.dll
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.pdb
+F:\ParkingLotSystem\obj\Debug\net6.0\ParkingLotSystem.genruntimeconfig.cache
+F:\ParkingLotSystem\obj\Debug\net6.0\ref\ParkingLotSystem.dll
